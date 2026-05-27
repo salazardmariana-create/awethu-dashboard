@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awethu — The Winning Locker Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-dark: #085041;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-dark: #0C447C;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --gray: #5F5E5A;
+    --gray-light: #F1EFE8;
+    --surface: #ffffff;
+    --bg: #F7F6F2;
+    --text: #1a1a18;
+    --text-muted: #888780;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+  .header {
+    background: var(--text);
+    color: #fff;
+    padding: 2.5rem 3rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .header-left { flex: 1; }
+
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 0.5rem;
+  }
+
+  .header-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+  }
+
+  .header-title span { color: var(--teal); }
+
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.75rem;
+    font-weight: 300;
+    max-width: 440px;
+  }
+
+  .header-right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .header-total-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .header-total {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .header-total span {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .nav-tabs {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 3rem;
+    gap: 0;
+  }
+
+  .nav-tab {
+    padding: 1rem 1.5rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+  .main { padding: 2.5rem 3rem; max-width: 1400px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .kpi.accent-teal { border-top: 3px solid var(--teal); }
+  .kpi.accent-blue { border-top: 3px solid var(--blue); }
+  .kpi.accent-purple { border-top: 3px solid var(--purple); }
+  .kpi.accent-amber { border-top: 3px solid var(--amber); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .badge-teal { background: var(--teal-light); color: var(--teal-dark); }
+  .badge-blue { background: var(--blue-light); color: var(--blue-dark); }
+  .badge-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .badge-amber { background: var(--amber-light); color: #633806; }
+
+  .chart-wrap { position: relative; }
+
+  .horizon-bar {
+    margin-bottom: 1.25rem;
+  }
+
+  .horizon-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .horizon-bar-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .horizon-bar-values {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .horizon-bar-track {
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .horizon-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  .fill-teal { background: var(--teal); }
+  .fill-blue { background: var(--blue); }
+  .fill-purple { background: var(--purple); }
+
+  .phase-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .phase-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .phase-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .phase-dot {
+    position: absolute;
+    left: -2rem;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  .dot-teal { background: var(--teal); }
+  .dot-blue { background: var(--blue); }
+  .dot-purple { background: var(--purple); }
+
+  .phase-period {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .phase-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .phase-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .phase-cost {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .kpi-table { width: 100%; border-collapse: collapse; }
+  .kpi-table th {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .kpi-table th:last-child { text-align: right; }
+  .kpi-table td {
+    padding: 10px;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .kpi-table td:last-child { text-align: right; font-weight: 500; }
+  .kpi-table tr:last-child td { border-bottom: none; }
+
+  .target-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .incl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+
+  .incl-list { list-style: none; }
+  .incl-list li {
+    display: flex;
+    gap: 8px;
+    padding: 7px 0;
+    font-size: 12px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .incl-list li:last-child { border-bottom: none; }
+  .incl-icon { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
+
+  .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 1rem; }
+  .payment-card {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .payment-pct {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .payment-when { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .payment-amount { font-size: 13px; font-weight: 500; color: var(--text); margin-top: 6px; }
+
+  .quote-block {
+    border-left: 3px solid var(--teal);
+    padding: 1rem 1.5rem;
+    background: var(--teal-light);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    line-height: 1.5;
+  }
+
+  .quote-attr {
+    font-size: 11px;
+    color: #0F6E56;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-right: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row.total {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding-top: 14px;
+    border-top: 2px solid var(--text);
+    border-bottom: none;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .header { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+    .header-right { text-align: left; }
+    .main { padding: 1.5rem; }
+    .nav-tabs { padding: 0 1.5rem; overflow-x: auto; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .incl-grid { grid-template-columns: 1fr; }
+    .payment-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <p class="header-eyebrow">BB & Company — Confidential · January 2016</p>
+    <h1 class="header-title">The Winning<br><span>Locker Room</span></h1>
+    <p class="header-sub">Strategic engagement dashboard for Awethu Project leadership. 18-month roadmap across three horizons.</p>
+  </div>
+  <div class="header-right">
+    <p class="header-total-label">Total investment</p>
+    <p class="header-total">$116,450 – $124,550<span>18-month engagement · excludes travel</span></p>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showSection('overview')">Overview</button>
+  <button class="nav-tab" onclick="showSection('horizons')">Horizons</button>
+  <button class="nav-tab" onclick="showSection('costs')">Cost breakdown</button>
+  <button class="nav-tab" onclick="showSection('kpis')">KPIs</button>
+  <button class="nav-tab" onclick="showSection('investment')">Investment</button>
+</div>
+
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="section-overview">
+
+    <div class="quote-block">
+      <p class="quote-text">"A winning locker room is one without any problems — it's only about how great the performance was, how great the next one is going to be."</p>
+      <p class="quote-attr">— Rob LeBlanc, Chief Investment Officer, Awethu Project</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi accent-teal">
+        <p class="kpi-label">Consulting hours</p>
+        <p class="kpi-value">1,040</p>
+        <p class="kpi-sub">at $75 / hour · all phases</p>
+      </div>
+      <div class="kpi accent-teal">
+        <p class="kpi-label">Consulting fee</p>
+        <p class="kpi-value">$78,000</p>
+        <p class="kpi-sub">fixed · all phases included</p>
+      </div>
+      <div class="kpi accent-blue">
+        <p class="kpi-label">Implementation</p>
+        <p class="kpi-value">$24,500+</p>
+        <p class="kpi-sub">variable · $24,500 – $32,600</p>
+      </div>
+      <div class="kpi accent-blue">
+        <p class="kpi-label">Engagement</p>
+        <p class="kpi-value">18 mo</p>
+        <p class="kpi-sub">H1 + H2 · full scope</p>
+      </div>
+      <div class="kpi accent-purple">
+        <p class="kpi-label">Horizons covered</p>
+        <p class="kpi-value">H1 + H2</p>
+        <p class="kpi-sub">H3 handed to Awethu at M18</p>
+      </div>
+      <div class="kpi accent-amber">
+        <p class="kpi-label">Target partnerships</p>
+        <p class="kpi-value">3 total</p>
+        <p class="kpi-sub">SAB + 2 new corporate funds</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <p class="card-title">Investment by horizon <span class="card-badge badge-teal">18 months</span></p>
+        <div class="chart-wrap" style="height: 240px;">
+          <canvas id="horizonDoughnut" role="img" aria-label="Donut chart showing investment split: Fix the locker room 40%, Optimize the engine 17%, Expanding the league 43%">Fix the locker room $41,500, Optimize the engine $18,000, Expanding the league $43,000</canvas>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:1rem; font-size:12px; color:var(--text-muted);">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#A8DFC9;"></span>Pre-season scouting 12%</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;"></span>Fix the locker room 36%</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#0F6E56;"></span>Optimize the engine 15%</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#185FA5;"></span>Expanding the league 37%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Consulting vs implementation <span class="card-badge badge-blue">cost mix</span></p>
+        <div class="chart-wrap" style="height:240px;">
+          <canvas id="costMix" role="img" aria-label="Bar chart showing consulting fee vs implementation costs per phase">Consulting fee $78,000, Implementation low $24,500 high $32,600</canvas>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:1rem; font-size:12px; color:var(--text-muted);">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;"></span>Consulting fee</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#D3D1C7;"></span>Implementation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">What we are building together</p>
+      <div class="grid-3" style="margin-bottom:0;">
+        <div style="padding:1rem; background:var(--teal-light); border-radius:10px;">
+          <p style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--teal-dark);margin-bottom:6px;">H1 · Fix the engine</p>
+          <p style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--teal-dark);margin-bottom:6px;">Fix the locker room</p>
+          <p style="font-size:12px;color:#0F6E56;line-height:1.5;">Compensation audit, cohort redesign 80–120/cycle, two-team structure, SAB as anchor vehicle.</p>
+        </div>
+        <div style="padding:1rem; background:var(--blue-light); border-radius:10px;">
+          <p style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-dark);margin-bottom:6px;">H2 · Build the future</p>
+          <p style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--blue-dark);margin-bottom:6px;">Expand, validate, research</p>
+          <p style="font-size:12px;color:#185FA5;line-height:1.5;">2 new corporate partnerships, 50-pair pilot program, on-ground research in 2–3 African markets.</p>
+        </div>
+        <div style="padding:1rem; background:var(--purple-light); border-radius:10px;">
+          <p style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-dark);margin-bottom:6px;">H3 · Awethu's to own</p>
+          <p style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;">First new market entry</p>
+          <p style="font-size:12px;color:#534AB7;line-height:1.5;">Handed over at M18. Awethu owns the playbook. BB & Company available on retainer only.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HORIZONS -->
+  <div class="section" id="section-horizons">
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:1.5rem;">
+          <p class="card-title">Phase timeline <span class="card-badge badge-teal">M1 – M48</span></p>
+          <div class="phase-timeline">
+            <div class="phase-item">
+              <div class="phase-dot dot-teal"></div>
+              <p class="phase-period">M1 – M3 · Pre-season</p>
+              <p class="phase-name">Pre-season scouting</p>
+              <p class="phase-desc">Interviews with founders, employees, and entrepreneurs. Systems mapping. Stakeholder analysis. Culture and compensation diagnostic.</p>
+              <p class="phase-cost">$13,950 fixed</p>
+            </div>
+            <div class="phase-item">
+              <div class="phase-dot dot-teal"></div>
+              <p class="phase-period">M1 – M6 · H1</p>
+              <p class="phase-name">Fix the locker room</p>
+              <p class="phase-desc">Full compensation and HR audit. Cohort resized to 80–120 participants. Incubation and ecosystem-expansion teams formally separated. SAB fund activated as primary commercial vehicle.</p>
+              <p class="phase-cost">$41,500 – $43,500</p>
+            </div>
+            <div class="phase-item">
+              <div class="phase-dot dot-teal"></div>
+              <p class="phase-period">M6 – M12 · H1</p>
+              <p class="phase-name">Optimize the engine</p>
+              <p class="phase-desc">Redesigned cycle runs with SAB as anchor. Dropout rates, business creation, and income growth tracked. Awethu playbook documentation begins. H2 team starts on-ground research in 2–3 target markets.</p>
+              <p class="phase-cost">$18,000 – $19,600</p>
+            </div>
+            <div class="phase-item">
+              <div class="phase-dot dot-blue"></div>
+              <p class="phase-period">M12 – M30 · H2</p>
+              <p class="phase-name">Expanding the league</p>
+              <p class="phase-desc">Separate team immerses in target markets country by country. Two additional corporate partnerships modeled on SAB structure. Pairing pilot with 50 matched pairs. Expanding the league findings presented to board.</p>
+              <p class="phase-cost">$43,000 – $47,500</p>
+            </div>
+            <div class="phase-item">
+              <div class="phase-dot dot-purple"></div>
+              <p class="phase-period">M24 – M48 · H3</p>
+              <p class="phase-name">First new market (Awethu-led)</p>
+              <p class="phase-desc">Awethu enters first African market with a local partner. Pairing program becomes standalone revenue offering. BB & Company available on retainer only — no scope included.</p>
+              <p class="phase-cost" style="color:var(--text-muted);">Not in scope</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:1.5rem;">
+          <p class="card-title">Budget weight by horizon</p>
+          <div class="horizon-bar">
+            <div class="horizon-bar-header">
+              <span class="horizon-bar-label">Pre-season scouting (M1–M3)</span>
+              <span class="horizon-bar-values">$13,950 · 12%</span>
+            </div>
+            <div class="horizon-bar-track"><div class="horizon-bar-fill fill-teal" style="width:12%; opacity:0.4;"></div></div>
+          </div>
+          <div class="horizon-bar">
+            <div class="horizon-bar-header">
+              <span class="horizon-bar-label">Fix the locker room (M1–M6)</span>
+              <span class="horizon-bar-values">$41,500 · 36%</span>
+            </div>
+            <div class="horizon-bar-track"><div class="horizon-bar-fill fill-teal" style="width:36%;"></div></div>
+          </div>
+          <div class="horizon-bar">
+            <div class="horizon-bar-header">
+              <span class="horizon-bar-label">Optimize the engine (M6–M12)</span>
+              <span class="horizon-bar-values">$18,000 · 15%</span>
+            </div>
+            <div class="horizon-bar-track"><div class="horizon-bar-fill fill-teal" style="width:15%; opacity:0.6;"></div></div>
+          </div>
+          <div class="horizon-bar" style="margin-bottom:0;">
+            <div class="horizon-bar-header">
+              <span class="horizon-bar-label">Expanding the league (M12–M30)</span>
+              <span class="horizon-bar-values">$43,000 · 37%</span>
+            </div>
+            <div class="horizon-bar-track"><div class="horizon-bar-fill fill-blue" style="width:37%;"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="card-title">Hours by phase</p>
+          <div class="chart-wrap" style="height:220px;">
+            <canvas id="hoursBar" role="img" aria-label="Bar chart of consulting hours per phase: Fix the locker room 480h, Optimize the engine 180h, H2 Partnerships 120h, H2 Research 160h, H2 Pairing 100h">Fix the locker room 480h, Optimize the engine 180h, H2 Partnerships 120h, H2 Research 160h, H2 Pairing 100h</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COSTS -->
+  <div class="section" id="section-costs">
+    <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr);">
+      <div class="kpi accent-teal">
+        <p class="kpi-label">H1 reset</p>
+        <p class="kpi-value" style="font-size:20px;">$41,500</p>
+        <p class="kpi-sub">to $43,500</p>
+      </div>
+      <div class="kpi accent-teal">
+        <p class="kpi-label">H1 optimize</p>
+        <p class="kpi-value" style="font-size:20px;">$18,000</p>
+        <p class="kpi-sub">to $19,600</p>
+      </div>
+      <div class="kpi accent-blue">
+        <p class="kpi-label">H2 expand</p>
+        <p class="kpi-value" style="font-size:20px;">$43,000</p>
+        <p class="kpi-sub">to $47,500</p>
+      </div>
+      <div class="kpi accent-purple">
+        <p class="kpi-label">Total range</p>
+        <p class="kpi-value" style="font-size:20px;">$116,450</p>
+        <p class="kpi-sub">to $125,050</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <p class="card-title">H1 · Fix the locker room <span class="card-badge badge-teal">M1 – M6</span></p>
+        <table class="kpi-table">
+          <thead><tr><th>Item</th><th style="text-align:right;">Low</th><th style="text-align:right;">High</th></tr></thead>
+          <tbody>
+            <tr><td>Consulting fee (480h × $75)</td><td style="text-align:right;">$36,000</td><td style="text-align:right;">$36,000</td></tr>
+            <tr><td>HR & compensation audit</td><td style="text-align:right;">$3,500</td><td style="text-align:right;">$4,500</td></tr>
+            <tr><td>Team workshops (×3)</td><td style="text-align:right;">$1,200</td><td style="text-align:right;">$1,800</td></tr>
+            <tr><td>Cohort redesign docs</td><td style="text-align:right;">$800</td><td style="text-align:right;">$1,200</td></tr>
+            <tr style="font-weight:500;background:var(--bg);"><td>Subtotal</td><td style="text-align:right;">$41,500</td><td style="text-align:right;">$43,500</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <p class="card-title">H1 · Optimize the engine <span class="card-badge badge-teal">M6 – M12</span></p>
+        <table class="kpi-table">
+          <thead><tr><th>Item</th><th style="text-align:right;">Low</th><th style="text-align:right;">High</th></tr></thead>
+          <tbody>
+            <tr><td>Consulting fee (180h × $75)</td><td style="text-align:right;">$13,500</td><td style="text-align:right;">$13,500</td></tr>
+            <tr><td>SAB cycle tracking setup</td><td style="text-align:right;">$600</td><td style="text-align:right;">$900</td></tr>
+            <tr><td>Awethu playbook design</td><td style="text-align:right;">$1,500</td><td style="text-align:right;">$2,000</td></tr>
+            <tr><td>2 on-site advisory visits</td><td style="text-align:right;">$2,400</td><td style="text-align:right;">$3,200</td></tr>
+            <tr style="font-weight:500;background:var(--bg);"><td>Subtotal</td><td style="text-align:right;">$18,000</td><td style="text-align:right;">$19,600</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <p class="card-title">H2 · Expanding the league <span class="card-badge badge-blue">M12 – M30</span></p>
+      <table class="kpi-table">
+        <thead><tr><th>Item</th><th style="text-align:right;">Low</th><th style="text-align:right;">High</th></tr></thead>
+        <tbody>
+          <tr><td>Consulting — partnerships (120h × $75)</td><td style="text-align:right;">$9,000</td><td style="text-align:right;">$9,000</td></tr>
+          <tr><td>Consulting — Expanding the league research (160h × $75)</td><td style="text-align:right;">$12,000</td><td style="text-align:right;">$12,000</td></tr>
+          <tr><td>Consulting — pairing program (100h × $75)</td><td style="text-align:right;">$7,500</td><td style="text-align:right;">$7,500</td></tr>
+          <tr><td>Expanding the league research trips (2 markets)</td><td style="text-align:right;">$7,200</td><td style="text-align:right;">$9,500</td></tr>
+          <tr><td>Corporate partnership materials + legal</td><td style="text-align:right;">$2,000</td><td style="text-align:right;">$3,000</td></tr>
+          <tr><td>Pairing program pilot (50 pairs)</td><td style="text-align:right;">$3,500</td><td style="text-align:right;">$5,000</td></tr>
+          <tr><td>Board presentation + travel</td><td style="text-align:right;">$1,800</td><td style="text-align:right;">$2,500</td></tr>
+          <tr style="font-weight:500;background:var(--bg);"><td>Subtotal</td><td style="text-align:right;">$43,000</td><td style="text-align:right;">$47,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Total investment summary</p>
+      <div class="summary-row"><span>Pre-season scouting (M1–M3)</span><span>$13,950 fixed</span></div>
+      <div class="summary-row"><span>Fix the locker room (M1–M6)</span><span>$41,500 – $43,500</span></div>
+      <div class="summary-row"><span>Optimize the engine (M6–M12)</span><span>$18,000 – $19,600</span></div>
+      <div class="summary-row"><span>Expanding the league (M12–M30)</span><span>$43,000 – $47,500</span></div>
+      <div class="summary-row total"><span>Total investment</span><span>$116,450 – $124,550</span></div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:1rem;font-style:italic;">Consultant travel and accommodation excluded. H3 execution not in scope. Final costs confirmed with Awethu leadership before engagement begins.</p>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section" id="section-kpis">
+    <div class="grid-2">
+      <div class="card">
+        <p class="card-title">H1 KPIs — Fix the engine <span class="card-badge badge-teal">M1 – M12</span></p>
+        <table class="kpi-table">
+          <thead><tr><th>Indicator</th><th>Target</th><th style="text-align:right;">Type</th></tr></thead>
+          <tbody>
+            <tr><td>Employee retention</td><td><span class="target-pill badge-teal">85%+</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">People</td></tr>
+            <tr><td>Weekly working hours</td><td><span class="target-pill badge-teal">45h max</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">People</td></tr>
+            <tr><td>Local talent hired</td><td><span class="target-pill badge-teal">20%+</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Culture</td></tr>
+            <tr><td>Cohort completion rate</td><td><span class="target-pill badge-teal">75%+</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Program</td></tr>
+            <tr><td>New formal businesses/cycle</td><td><span class="target-pill badge-teal">65+</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Impact</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <p class="card-title">H2 KPIs — Build the future <span class="card-badge badge-blue">M12 – M30</span></p>
+        <table class="kpi-table">
+          <thead><tr><th>Indicator</th><th>Target</th><th style="text-align:right;">Type</th></tr></thead>
+          <tbody>
+            <tr><td>Corporate partnerships</td><td><span class="target-pill badge-blue">3 by M24</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Growth</td></tr>
+            <tr><td>Pairing program pilots</td><td><span class="target-pill badge-blue">50 pairs</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Program</td></tr>
+            <tr><td>New leagues scouted</td><td><span class="target-pill badge-blue">3 by M18</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Expansion</td></tr>
+            <tr><td>Entrepreneur income growth</td><td><span class="target-pill badge-blue">2× baseline</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Impact</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <p class="card-title">H3 KPIs — Awethu-owned <span class="card-badge badge-purple">M24 – M48</span></p>
+      <table class="kpi-table">
+        <thead><tr><th>Indicator</th><th>Target</th><th style="text-align:right;">Type</th></tr></thead>
+        <tbody>
+          <tr><td>First market entry</td><td><span class="target-pill badge-purple">M30 – M36</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Expansion</td></tr>
+          <tr><td>Regional institutional investors</td><td><span class="target-pill badge-purple">First close</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Capital</td></tr>
+          <tr><td>Pairing program revenue</td><td><span class="target-pill badge-purple">Standalone</span></td><td style="text-align:right;font-size:11px;color:var(--text-muted);">Revenue</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <p class="card-title">KPI visual tracker</p>
+      <div class="chart-wrap" style="height:300px;">
+        <canvas id="kpiRadar" role="img" aria-label="Radar chart showing current vs target across 6 KPIs">Current vs target KPIs across retention, cohort completion, partnerships, research, pairing, and income growth.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVESTMENT -->
+  <div class="section" id="section-investment">
+    <div class="grid-2">
+      <div class="card">
+        <p class="card-title">What is included</p>
+        <ul class="incl-list">
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>All 1,040 consulting hours across all phases</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>HR audit coordination and compensation redesign</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>Full Awethu playbook — print and digital</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>Expanding the league research across 2 markets with findings report</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>SAB replication template for 2 new partnerships</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>Pairing program curriculum design and 50-pair pilot</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>All deliverables in editable digital format</li>
+          <li><span class="incl-icon" style="color:var(--teal);">✓</span>Final handoff package at month 18</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <p class="card-title">What is not included</p>
+        <ul class="incl-list">
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Consultant flights and accommodation in Johannesburg</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>On-site venue rental and catering for workshops</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Legal fees for new partnership agreements</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Software licenses beyond standard office tools</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Salary correction costs from the HR audit</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>H3 market entry execution costs</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Translation or interpretation services</li>
+          <li><span class="incl-icon" style="color:#D85A30;">×</span>Video or photography of any sessions</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <p class="card-title">Payment structure</p>
+      <div class="payment-grid">
+        <div class="payment-card">
+          <p class="payment-pct">35%</p>
+          <p class="payment-when">Project kickoff · M1</p>
+          <p class="payment-amount">$35,875 – $38,710</p>
+        </div>
+        <div class="payment-card">
+          <p class="payment-pct">35%</p>
+          <p class="payment-when">H1 completion · M6</p>
+          <p class="payment-amount">$35,875 – $38,710</p>
+        </div>
+        <div class="payment-card">
+          <p class="payment-pct">30%</p>
+          <p class="payment-when">Final handoff · M18</p>
+          <p class="payment-amount">$30,750 – $33,180</p>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:1rem;font-style:italic;">In-kind option available: up to 20% of service fee may be offset via access to Awethu's entrepreneur portfolio for BB & Company team development. Subject to mutual agreement.</p>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Why this price is the right price</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+        <div style="padding:1rem;background:var(--teal-light);border-radius:10px;">
+          <p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--teal-dark);margin-bottom:6px;">Remote-first after M6</p>
+          <p style="font-size:12px;color:#0F6E56;line-height:1.5;">Phase 2 runs mostly remote, cutting accommodation costs in half versus a traditional on-site engagement.</p>
+        </div>
+        <div style="padding:1rem;background:var(--blue-light);border-radius:10px;">
+          <p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-dark);margin-bottom:6px;">No lock-in beyond Phase 1</p>
+          <p style="font-size:12px;color:#185FA5;line-height:1.5;">You commit to $13,950 upfront for pre-season scouting. Full engagement only proceeds once Phase 1 findings confirm our hypothesis.</p>
+        </div>
+        <div style="padding:1rem;background:var(--purple-light);border-radius:10px;">
+          <p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-dark);margin-bottom:6px;">Handoff at M18</p>
+          <p style="font-size:12px;color:#534AB7;line-height:1.5;">You own every tool we build. No dependency on BB & Company after the engagement ends. H3 is yours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const teal = '#1D9E75';
+const tealDark = '#0F6E56';
+const blue = '#185FA5';
+const gray = '#D3D1C7';
+const purple = '#534AB7';
+const textMuted = '#888780';
+
+new Chart(document.getElementById('horizonDoughnut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Pre-season scouting', 'Fix the locker room', 'Optimize the engine', 'Expanding the league'],
+    datasets: [{
+      data: [13950, 41500, 18000, 43000],
+      backgroundColor: ['#A8DFC9', teal, tealDark, blue],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' $' + ctx.parsed.toLocaleString()
+        }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('costMix'), {
+  type: 'bar',
+  data: {
+    labels: ['Fix the locker room', 'Optimize the engine', 'Expanding the league'],
+    datasets: [
+      {
+        label: 'Consulting fee',
+        data: [36000, 13500, 28500],
+        backgroundColor: teal,
+        borderRadius: 4
+      },
+      {
+        label: 'Implementation',
+        data: [5500, 4500, 14500],
+        backgroundColor: gray,
+        borderRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' $' + ctx.parsed.y.toLocaleString()
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { display: false },
+        ticks: { color: textMuted, font: { size: 11 } }
+      },
+      y: {
+        stacked: true,
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: {
+          color: textMuted,
+          font: { size: 11 },
+          callback: v => '$' + Math.round(v / 1000) + 'k'
+        }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('hoursBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Fix the locker room', 'Optimize the engine', 'Partnerships', 'League research', 'Pairing program'],
+    datasets: [{
+      label: 'Consulting hours',
+      data: [480, 180, 120, 160, 100],
+      backgroundColor: [teal, teal, blue, blue, blue],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y + 'h' } }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: textMuted, font: { size: 10 }, maxRotation: 30 }
+      },
+      y: {
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { color: textMuted, font: { size: 11 }, callback: v => v + 'h' }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('kpiRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Employee retention', 'Cohort completion', 'Corporate partnerships', 'New leagues scouted', 'Pairing pairs', 'Income growth'],
+    datasets: [
+      {
+        label: 'Current baseline',
+        data: [60, 50, 17, 0, 0, 100],
+        borderColor: gray,
+        backgroundColor: 'rgba(211,209,199,0.15)',
+        pointBackgroundColor: gray,
+        borderWidth: 1.5,
+        pointRadius: 3
+      },
+      {
+        label: 'BB & Company target',
+        data: [85, 75, 100, 100, 100, 200],
+        borderColor: teal,
+        backgroundColor: 'rgba(29,158,117,0.1)',
+        pointBackgroundColor: teal,
+        borderWidth: 2,
+        pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: { color: textMuted, font: { size: 11 }, boxWidth: 10, padding: 16 }
+      }
+    },
+    scales: {
+      r: {
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        angleLines: { color: 'rgba(0,0,0,0.06)' },
+        ticks: { display: false },
+        pointLabels: { color: textMuted, font: { size: 11 } }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
